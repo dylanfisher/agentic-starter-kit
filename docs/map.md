@@ -43,9 +43,14 @@ the dependency direction.
 **Dependency direction is one-way: features → components → primitives.** Never upward, never
 sideways between features. If a primitive needs something from a component, it isn't a primitive.
 
-Enforce this with the linter rather than in prose — `eslint-plugin-import`'s `no-restricted-paths`,
+Enforce this with a tool rather than in prose — `eslint-plugin-import`'s `no-restricted-paths`,
 `dependency-cruiser`, `import-linter` (Python), or `go-arch-lint`. Wire it into `./scripts/check`
 and this paragraph becomes the only place it's written down.
+
+If the stack has no such plugin, write `scripts/arch`: hold the tier table above as a map of tier →
+tiers it may import from, walk the source files under each tier, parse their import statements, and
+fail on any edge the map forbids. That is about forty lines in any language, and worth them — an
+unenforced dependency rule is one that has already been broken somewhere nobody has looked.
 
 ## Naming
 

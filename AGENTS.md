@@ -27,6 +27,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 | Task | Command |
 |---|---|
 | Install / bootstrap | `./scripts/setup` |
+| Run locally | `./scripts/dev` |
 | Run tests | `./scripts/test` |
 | **Full gate** | `./scripts/check` |
 

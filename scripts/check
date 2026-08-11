@@ -79,16 +79,23 @@ run links bash -c '
 
 # Scaffolding is meant to be torn out, and a half-torn teardown reads as though
 # the project were still a template. Dormant until docs/scaffold.md is gone, so
-# it never fires on a fresh clone; delete this whole step once it has passed.
+# it never fires on a fresh clone — which also means restoring that file switches
+# the step back off. Keep it afterwards anyway: it costs one grep, and it catches
+# scaffolding text reintroduced by a copied file or a reverted deletion.
 # This file is excluded from the word search — it mentions the term by design —
 # so its own leftover is caught by looking for the todo() helper instead.
 run residue bash -c '
   if [ -e docs/scaffold.md ]; then echo "not scaffolded yet — skipped"; exit 0; fi
   bad=""
-  for f in README.md CLAUDE.md AGENTS.md scripts/setup scripts/test docs/map.md docs/principles.md; do
+  for f in README.md CLAUDE.md AGENTS.md scripts/setup scripts/dev scripts/test docs/map.md docs/principles.md; do
     [ -e "$f" ] || continue
     grep -qi "scaffold" "$f" && bad="$bad $f"
   done
+  # The workflow placeholder says "scaffold" nowhere, and leaving it in keeps CI
+  # red forever with no local symptom — so match its text directly.
+  if [ -e .github/workflows/check.yml ] && grep -q "no language setup step configured" .github/workflows/check.yml; then
+    bad="$bad .github/workflows/check.yml(setup placeholder)"
+  fi
   [ -e .claude/commands/scaffold.md ] && bad="$bad .claude/commands/scaffold.md"
   grep -q "^todo()" scripts/check && bad="$bad scripts/check(todo helper)"
   if [ -n "$bad" ]; then
@@ -100,6 +107,7 @@ run residue bash -c '
 run format    todo "npx prettier --check ."
 run lint      todo "npx eslint ."
 run typecheck todo "npx tsc --noEmit"   # delete this step entirely if the language is untyped
+run arch      todo "npx depcruise --validate"   # or ./scripts/arch — see the Tiers table in docs/map.md
 run test      ./scripts/test
 
 if [ ${#failures[@]} -gt 0 ]; then

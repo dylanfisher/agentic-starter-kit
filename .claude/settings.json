@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(./scripts/check)",
+      "Bash(./scripts/dev:*)",
       "Bash(./scripts/setup)",
       "Bash(./scripts/test:*)"
     ],

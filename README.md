@@ -6,15 +6,15 @@ work is done, not what it's written in.
 ## Use it
 
 ```sh
-gh repo create my-thing --template dylanfisher/agentic-starter-kit --private --clone
-cd my-thing
+git clone --depth 1 https://github.com/dylanfisher/agentic-starter-kit my-thing &&
+  cd my-thing &&
+  rm -rf .git &&
+  git init && git add -A && git commit -m "first commit"
 ```
 
 Then open Claude Code and run `/scaffold`. It interviews you through
 [docs/scaffold.md](docs/scaffold.md) — stack, tooling, the `check` gate, boundaries — fills in
 AGENTS.md, and deletes the scaffolding files as its last step.
-
-Without `gh`: `npx degit dylanfisher/agentic-starter-kit my-thing`.
 
 ## What's here
 
@@ -22,8 +22,9 @@ Without `gh`: `npx degit dylanfisher/agentic-starter-kit my-thing`.
 |---|---|
 | `AGENTS.md` | The point of the repo. Read by every agent, every session. Kept under ~50 lines. |
 | `CLAUDE.md` | Imports AGENTS.md; holds Claude Code-only notes. |
-| `scripts/check` | The gate — AGENTS.md limits, map and link integrity, scaffolding residue, format, lint, typecheck, test. One command to remember. |
-| `scripts/setup`, `scripts/test` | Bootstrap and test. Stubs until scaffolded. |
+| `scripts/check` | The gate — AGENTS.md limits, map and link integrity, scaffolding residue, format, lint, typecheck, arch, test. One command to remember. |
+| `scripts/setup`, `scripts/dev`, `scripts/test` | Bootstrap, run, test. Stubs until scaffolded. `dev` is the only place the run command — `op run` wrapper and all — is written down. |
+| `.github/workflows/check.yml` | CI runs the same gate. Needs its language setup step filled in. |
 | `docs/scaffold.md` | Post-clone checklist — the single source for the setup procedure. Deleted once used. |
 | `docs/map.md` | Where things live and how to find one before building a second. Conventions, not an inventory. |
 | `docs/principles.md` | Rationale behind the principles in AGENTS.md. |
