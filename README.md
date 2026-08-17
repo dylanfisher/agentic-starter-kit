@@ -6,10 +6,10 @@ work is done, not what it's written in.
 ## Use it
 
 ```sh
-git clone --depth 1 https://github.com/dylanfisher/agentic-starter-kit my-thing &&
-  cd my-thing &&
-  rm -rf .git &&
-  git init && git add -A && git commit -m "first commit"
+git clone --depth 1 https://github.com/dylanfisher/agentic-starter-kit my-thing
+cd my-thing
+rm -rf .git
+git init && git add -A && git commit -m "first commit"
 ```
 
 Then open Claude Code and run `/scaffold`. It interviews you through
@@ -47,3 +47,23 @@ Everything a formatter or linter can enforce stays out of it entirely — includ
 The principles baked into AGENTS.md — single source of truth, match the surrounding code, DRY on the
 third occurrence, smallest viable change, fail loudly — don't change per project, so they ship
 filled in. Everything else is a placeholder for `/scaffold`.
+
+
+## Tips & Tricks
+
+- Change, adapt, and remove these files to fit your project! This repo is just here to help set up a solid foundation.
+- Create a retrospective skill that will analyze your last set of prompts and help you identify slow
+  areas in your feedback loop. Make sure agents don't spend unnecessary time tripping over the same things.
+- Add a flag to AGENTS.md indicating the app is pre-release, and breaking changes are ok. Avoid unnecessary migrations
+  and dumb behavior. e.g.:
+    > While the app is pre-release, durable data has exactly one shape (one `Session` type, one projection,
+    > one validator, no `version` field, no migration array), and any stored data that does not match that shape is discarded
+    > and the feature starts fresh rather than being repaired.
+- Review and refactor often. Check for code duplication and ensure DRY. Keep the core clean so future code doesn't drift.
+  Try to automate this: e.g. every N commits run an automated scan with cheap and fast agents.
+- Plan out large behaviors extensively. Start with a quick list of features, have an agent improve these based on
+  context awareness of the app, then create a multi-step plan.md file. Craft a prompt the will instruct an orchestrator
+  to implement each step using subagent(s).
+- For a performance-oriented app, measure and profile often. Watch for performance drift and fix before changes get merged.
+- For a typographic website, use AGENT rules to make sure typography is only applied via distinct class names and never
+  one-off line-height, letter-spacing, for font-sizing adjustments.
