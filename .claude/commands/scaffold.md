@@ -10,6 +10,16 @@ restate its steps here — this file holds only how to conduct the interview.
 
 How to run it:
 
+- **Open with one broad question: what are we building?** Ask it alone, before anything in the
+  checklist. Invite the user to describe it in their own words: what it does, who uses it, where
+  it runs (web app, CLI, library, service, mobile…), and any constraints they already know about,
+  such as an existing team language, hosting target, or integrations. Play back a two-line summary
+  and confirm it before moving on.
+- **Let that answer shape every later question.** Draft the name and one-sentence description
+  for section 1 from it. Tailor each recommendation to it: the stack, the tiers in `docs/map.md`,
+  the boundaries, and whether secrets or CI are needed at all. Skip questions it already answered
+  (confirm them in one line instead), and leave out options that don't fit. Say *why* each
+  recommendation fits what they described.
 - **Ask, don't infer.** Do not scan the filesystem and guess the stack. An empty repo has no signal,
   and generated guesses are exactly the noise this template exists to avoid.
 - Ask in **small batches** — two or three related questions at a time, not a wall of twenty.
