@@ -66,4 +66,8 @@ filled in. Everything else is a placeholder for `/scaffold`.
   to implement each step using subagent(s).
 - For a performance-oriented app, measure and profile often. Watch for performance drift and fix before changes get merged.
 - For a typographic website, use AGENT rules to make sure typography is only applied via distinct class names and never
-  one off line-height, letter-spacing, or font-sizing adjustments.
+  one-off line-height, letter-spacing, or font-sizing adjustments.
+- Encourage a particular comment style and language usage early on (e.g. try to avoid claudisms). I've found myself in
+  situations where a fully agentic project with lots of stored memories and documentation can develop a tendency towards
+  esoteric language tendencies. Imagine simple code documentation that sounds like riddles, and it grows and perpetuates
+  because the code tries to match the style of existing code.
