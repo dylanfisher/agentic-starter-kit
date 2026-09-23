@@ -66,4 +66,4 @@ filled in. Everything else is a placeholder for `/scaffold`.
   to implement each step using subagent(s).
 - For a performance-oriented app, measure and profile often. Watch for performance drift and fix before changes get merged.
 - For a typographic website, use AGENT rules to make sure typography is only applied via distinct class names and never
-  one-off line-height, letter-spacing, for font-sizing adjustments.
+  one off line-height, letter-spacing, or font-sizing adjustments.
