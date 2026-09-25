@@ -25,6 +25,7 @@ AGENTS.md, and deletes the scaffolding files as its last step.
 | `scripts/check` | The gate — AGENTS.md limits, map and link integrity, scaffolding residue, format, lint, typecheck, arch, test. One command to remember. |
 | `scripts/setup`, `scripts/dev`, `scripts/test` | Bootstrap, run, test. Stubs until scaffolded. `dev` is the only place the run command — `op run` wrapper and all — is written down. |
 | `.github/workflows/check.yml` | CI runs the same gate. Needs its language setup step filled in. |
+| `.github/pull_request_template.md` | Why, what to look at, how it was verified. |
 | `docs/scaffold.md` | Post-clone checklist — the single source for the setup procedure. Deleted once used. |
 | `docs/map.md` | Where things live and how to find one before building a second. Conventions, not an inventory. |
 | `docs/principles.md` | Rationale behind the principles in AGENTS.md. |
