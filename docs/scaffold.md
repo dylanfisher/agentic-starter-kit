@@ -109,7 +109,9 @@ still contains `{{PLACEHOLDER}}`, or still contains the TEMPLATE block.
 - [ ] Still under ~50 lines
 - [ ] **Boundaries** section written with real entries — generated dirs, migrations, protected
       branches, anything that breaks if edited directly. This is the highest-value section.
-- [ ] Example boundaries deleted
+- [ ] Example boundaries deleted, and the comment above them
+- [ ] **Pre-release** boundary left in place. It comes out at the first production release, when
+      stored data starts needing migrations — not now
 
 ### Voice and commits — `docs/writing.md`
 

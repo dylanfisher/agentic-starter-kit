@@ -53,6 +53,7 @@ Non-negotiable, regardless of stack. Rationale: [docs/principles.md](docs/princi
 - {{e.g. Never edit `db/migrations/` by hand — run `<migration command>`.}}
 - {{e.g. Never commit to `main` — branch first.}}
 - {{e.g. `src/generated/` is generated — edit the schema, then regenerate.}}
+- **Pre-release:** breaking changes are fine. Stored data has one shape — no version fields, migrations, or compatibility shims; data that doesn't match is discarded. Delete this line at the first production release.
 - Never write, print, or `op read` a plaintext secret. `.env.example` holds `op://` references; they resolve via `op run` at runtime.
 
 ## Definition of done

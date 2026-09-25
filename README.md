@@ -56,11 +56,8 @@ filled in. Everything else is a placeholder for `/scaffold`.
 - Change, adapt, and remove these files to fit your project! This repo is just here to help set up a solid foundation.
 - Create a retrospective skill that will analyze your last set of prompts and help you identify slow
   areas in your feedback loop. Make sure agents don't spend unnecessary time tripping over the same things.
-- Add a flag to AGENTS.md indicating the app is pre-release, and breaking changes are ok. Avoid unnecessary migrations
-  and dumb behavior. e.g.:
-    > While the app is pre-release, durable data has exactly one shape (one `Session` type, one projection,
-    > one validator, no `version` field, no migration array), and any stored data that does not match that shape is discarded
-    > and the feature starts fresh rather than being repaired.
+- AGENTS.md ships with a **Pre-release** boundary: breaking changes are ok, and stored data has one shape with no
+  migrations. It stops agents writing compatibility code for data nobody has yet. Delete it when you launch.
 - Review and refactor often. Check for code duplication and ensure DRY. Keep the core clean so future code doesn't drift.
   Try to automate this: e.g. every N commits run an automated scan with cheap and fast agents.
 - Plan out large behaviors extensively. Start with a quick list of features, have an agent improve these based on
