@@ -61,3 +61,4 @@ Non-negotiable, regardless of stack. Rationale: [docs/principles.md](docs/princi
 - New behavior has a test that fails without the change.
 - No new dependencies, no new files outside the agreed layout, no TODOs left behind.
 - If a decision was non-obvious, record it in `docs/decisions/`.
+- Comments, docs, and commit messages follow [docs/writing.md](docs/writing.md).

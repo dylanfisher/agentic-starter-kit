@@ -28,6 +28,7 @@ AGENTS.md, and deletes the scaffolding files as its last step.
 | `docs/scaffold.md` | Post-clone checklist — the single source for the setup procedure. Deleted once used. |
 | `docs/map.md` | Where things live and how to find one before building a second. Conventions, not an inventory. |
 | `docs/principles.md` | Rationale behind the principles in AGENTS.md. |
+| `docs/writing.md` | Voice for comments and docs, and the commit message format. |
 | `docs/decisions/` | ADRs — why things are the way they are. |
 | `.claude/` | Permission allowlist and the `/scaffold` command. |
 

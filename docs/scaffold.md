@@ -111,6 +111,28 @@ still contains `{{PLACEHOLDER}}`, or still contains the TEMPLATE block.
       branches, anything that breaks if edited directly. This is the highest-value section.
 - [ ] Example boundaries deleted
 
+### Voice and commits — `docs/writing.md`
+
+Nothing in the stack decides these, so ask outright. For each question, show the default from
+`docs/writing.md` next to one or two alternatives, written as short examples, and let the user
+pick from what they see. Edit `docs/writing.md` in place with what they choose.
+
+- [ ] **Comment and doc voice.** Who is the reader, and how terse should it be? How much should
+      the code be commented: only where it would surprise, or a docstring on every function? If they
+      have a codebase or writer whose tone they like, ask for it and describe it in a line
+- [ ] **Words to avoid.** Offer the default list, then ask which phrasings they're already tired of
+      from AI-written code, and add those
+- [ ] **Commit format.** Conventional Commits (the default), plain imperative titles
+      ("Add retry to upload"), or a convention their team already uses. Prune the type table to the
+      types they'll actually use
+- [ ] **Commit title and scope.** Length limit, casing, and whether scopes are used. If they are,
+      scopes come from the tier names chosen for `docs/map.md`
+- [ ] **Commit body.** When a body is required, and what goes in it (why, rejected alternatives,
+      review notes, ticket refs). Replace the example commit with one written for this project
+- [ ] **Enforcement.** Offer a `commit-msg` hook that checks the title format: `commitlint`, or a
+      short `scripts/commit-msg` if they don't want the dependency. Say which is more
+      appropriate for the stack
+
 ## 7. Automation
 
 - [ ] `.github/workflows/check.yml` — add the setup action for this language after the checkout,
@@ -154,4 +176,4 @@ Do the rewrites first — deleting the two files while something still links to 
 - [ ] `docs/scaffold.md` (this file) deleted
 - [ ] `.claude/commands/scaffold.md` deleted
 - [ ] `./scripts/check` passes — the `residue` step now runs and finds nothing
-- [ ] Commit: `chore: scaffold project`
+- [ ] Commit: `chore: scaffold project`, or its equivalent in the format chosen in step 6

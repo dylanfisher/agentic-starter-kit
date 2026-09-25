@@ -24,6 +24,9 @@ How to run it:
   and generated guesses are exactly the noise this template exists to avoid.
 - Ask in **small batches** — two or three related questions at a time, not a wall of twenty.
 - Offer a concrete recommendation with each question so the user can say "yes" and move on.
+- **Voice and commit style are taste, not facts about the project.** Show short examples for
+  them rather than describing options in the abstract. People can pick a tone when they see it
+  far more easily than they can name one.
 - If the user says something that contradicts an earlier answer, follow the new answer and adjust
   what you already wrote.
 - **Stop at the gate.** Do not proceed past the "The gate" section until `./scripts/check` actually
