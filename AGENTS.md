@@ -31,7 +31,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 | Run tests | `./scripts/test` |
 | **Full gate** | `./scripts/check` |
 
-`./scripts/check` runs format + lint + typecheck + tests. It is the gate — see Definition of done.
+`./scripts/check` is the gate — see Definition of done.
 
 ## Principles
 
