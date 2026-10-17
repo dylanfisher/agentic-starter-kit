@@ -1,7 +1,8 @@
 # Scaffolding checklist
 
-Run this once, immediately after cloning the starter. In Claude Code, run `/scaffold` and the agent
-will conduct it as an interview. Otherwise work through it by hand.
+Run this once, immediately after cloning the starter. In Claude Code, run `/scaffold`: the agent
+interviews you for every decision below, plays them back for confirmation, and only then works
+through the sections in order. Otherwise work through it by hand.
 
 The goal is a repo where `./scripts/check` passes on an empty project. Until that's true, nothing
 else is real — the gate is what every later instruction depends on.
