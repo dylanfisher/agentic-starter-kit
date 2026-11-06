@@ -24,6 +24,15 @@ How to run it:
   and generated guesses are exactly the noise this template exists to avoid.
 - Ask in **small batches** — two or three related questions at a time, not a wall of twenty.
 - Offer a concrete recommendation with each question so the user can say "yes" and move on.
+  Where the checklist names a default, ask it as a multiple-choice question (the AskUserQuestion
+  tool), default first and marked recommended, with one or two real alternatives.
+- **Ask about every choice the checklist leaves open unless the first answer already settles it.**
+  That includes the ones easy to skip as "just tooling": the orchestration settings (step 7),
+  `test --changed`, the single-source checks, reference docs, the push policy, and what gets a
+  decision record. A default the user never saw is a decision made for them.
+- **Orchestration is about how the owner likes to work, not about the code.** Before step 7, ask
+  how they ran their last large agent-built project, if there was one, and what got in the way;
+  let that pick the defaults you recommend.
 - **Voice and commit style are taste, not facts about the project.** Show short examples for
   them rather than describing options in the abstract. People can pick a tone when they see it
   far more easily than they can name one.

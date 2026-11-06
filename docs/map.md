@@ -22,6 +22,7 @@ against a codebase you haven't searched.
 | a helper / util | `rg 'export (function\|const)' {{LIB}}/` |
 | a config value | `rg '<KEY>' {{CONFIG}}` — config is read in one module only |
 | a type / interface | `rg '(type\|interface\|class) <Name>'` |
+| a change to how something behaves | `rg -il '<topic>' docs/decisions/` — read the record that governs it first |
 
 If a search turns up something close but not identical, that's the second occurrence. Use it or
 duplicate it — do not abstract yet (principle 3).
@@ -68,6 +69,30 @@ Things move up a tier deliberately, never by accident:
 - **Primitive grows a config read or a domain type** → it was never a primitive; move it up.
 
 A promotion is its own commit, separate from whatever work revealed it (principle 4).
+
+## Decision records
+
+`docs/decisions/NNNN-slug.md`, copied from `0000-template.md`. {{Which choices get a record: the
+default is every choice a reader would otherwise reopen — an approach, a rejected alternative, a
+behavior the owner decided. Records then double as the behavior spec, and a brief quotes the one
+that governs its step.}}
+
+- **Find the governing record before changing a behavior** (the recipe above). A change that
+  contradicts one amends it in the same commit.
+- **Amend, don't pile up.** A refinement edits the record in place and adds a dated line under
+  `## Amendments`. A later record that changes part of an earlier one names it in its own Status,
+  and the earlier record's Status says `amended by NNNN` and what. `superseded by` is for a record
+  whose decision no longer holds at all.
+- **Numbers are taken in order and never reused.** When several agents work at once, the
+  orchestrator hands out the numbers ([agent-rules.md](agent-rules.md)); a builder never picks
+  its own, or two branches take the same one and one gets renumbered.
+
+## Untracked state — `tmp/`
+
+Git ignores `tmp/`. It holds working state that has to outlive a session but isn't part of the
+project: a plan in progress, `tmp/handoff.md`, the owner's screenshots in `tmp/shots/`, and
+cloned reference docs in `tmp/docs/` ([reference.md](reference.md)). A session's scratchpad is
+wiped when the session ends or crashes; `tmp/` is not. Nothing in the build or tests reads it.
 
 <!-- paths: {{PRIMITIVES}} {{COMPONENTS}} {{FEATURES}} {{LIB}} {{CONFIG}} -->
 <!-- ↑ scripts/check verifies every path above exists. Keep it in sync with the Tiers table;

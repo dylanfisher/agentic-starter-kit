@@ -15,6 +15,10 @@ lockfile, tool configs, and a source tree — not more documentation.
 - [ ] `README.md` title and description replaced
 - [ ] `.git` points at the right remote (`git remote -v`)
 - [ ] `LICENSE` added, or a deliberate decision that this stays private and unlicensed
+- [ ] **Sibling projects.** Is there another project of the owner's, or a conventions repo, this
+      one should follow (commands, config shape, UI, naming)? If so, note its path. Step 9's
+      record says what is ported from it and what is decided fresh: port its decisions, not its
+      code
 
 ## 2. Stack
 
@@ -47,6 +51,16 @@ first file written already obeys it.
       says what it does and it is ~40 lines. Do not settle for the rule living only in prose.
 - [ ] `./scripts/check` passes its `map` step
 
+### Reference docs — `docs/reference.md`
+
+- [ ] Ask which questions agents will keep looking up for this stack: the language, the test
+      framework, the formatter's rules, the main framework. Recommend a local source for each —
+      a shallow clone of its docs repo into `tmp/docs/`, the installed package's source, SDK
+      headers — and the web only for the rest. Fill in the table and the clone block, run the
+      clones once, and check each path exists
+- [ ] Or, if the owner would rather not, delete `docs/reference.md` and the **Reference docs**
+      line in AGENTS.md
+
 ## 3. Quality tooling
 
 Everything here exists so that AGENTS.md never has to describe style in prose.
@@ -55,6 +69,16 @@ Everything here exists so that AGENTS.md never has to describe style in prose.
 - [ ] Linter installed and configured
 - [ ] Type checking enabled in **strict** mode, if the language has it
 - [ ] Test framework installed, with one trivial passing test to prove the wiring
+- [ ] **Single-source checks.** Recommend two, and wire in the ones the owner takes as the
+      `dupes` and `surface` steps of `./scripts/check`; delete a declined step:
+      - *dupes*: a literal of four or more characters in more than one source file, or a block of
+        about eight lines copied a third time (`jscpd`, `pylint --enable=duplicate-code`, `dupl`,
+        or a short script; tests excluded)
+      - *surface*: a public declaration nothing outside its module uses (`knip`, `vulture`,
+        `deadcode`, or a script)
+
+      Both start with a backlog on an existing tree. On an empty one they cost nothing, which is
+      why now is the time
 - [ ] `.editorconfig` reviewed — indent size matches the formatter's config, and the stanzas for
       languages this project does not use are deleted
       (`.gitattributes` already pins LF endings; no change needed unless you add binary types)
@@ -70,13 +94,20 @@ unconfigured step is a `run <name> todo "<suggested command>"` line — replace 
 
 - [ ] `./scripts/setup` installs dependencies from a clean checkout (replace the stub `printf`/`exit`)
 - [ ] `./scripts/test` runs the suite (same)
+- [ ] `./scripts/test --changed [ref]` runs only the tests for the files changed since `ref`
+      (default `HEAD`), untracked files included, and the whole suite when a shared input changes
+      (the manifest, test helpers, the script itself). Use the runner's own option where it has
+      one (`vitest --changed`, `jest --changedSince`); otherwise map each changed source file to
+      its test file by the naming rule in `docs/map.md`. The script's header says the contract.
+      Ask whether to add, now or later: skipping the whole suite when its inputs match the last
+      passing run, and a low-priority mode for when several agents build at once
 - [ ] `./scripts/dev` runs the app locally, wrapping `op run` (same). This is the only place the run
       command is written down — AGENTS.md, README and `.env.example` point at the script, never
       repeat it. A longhand `op run --env-file=... -- <server> <flags>` copied into three files is
       three copies to keep in sync, and they will diverge on the first flag added.
-- [ ] `./scripts/check` — format, lint, typecheck, arch, test all replaced; delete the `typecheck`
-      step entirely if the language is untyped, and the `arch` step if nothing enforces the tier
-      boundaries in docs/map.md
+- [ ] `./scripts/check` — format, lint, typecheck, arch, dupes, surface, test all replaced; delete
+      the `typecheck` step entirely if the language is untyped, the `arch` step if nothing enforces
+      the tier boundaries in docs/map.md, and any single-source step the owner declined
 - [ ] Verified: `./scripts/check` exits 0, and exits non-zero with **all** failures listed when you
       deliberately break something
 
@@ -94,22 +125,26 @@ the mechanism; read it before doing this section.
       workflow step is wrapped in `op run --env-file=.env.example --` — the token authenticates the
       `op` CLI but injects nothing by itself. Only if `./scripts/setup` or `./scripts/check` actually
       needs a secret; tests that supply their own fake values need neither, so leave both off until
-      something fails for want of it (step 7)
+      something fails for want of it (step 8)
 - [ ] Config is read in exactly one module, which throws on a missing key; the rest of the code
       imports from it
 - [ ] No `.env` on disk. If you skipped 1Password, `.env` is untracked and you accept the tradeoff.
 
 ## 6. AGENTS.md
 
-`./scripts/check` enforces the first three of these — it fails while the file is over ~50 lines,
+`./scripts/check` enforces the first three of these — it fails while the file is over 700 words,
 still contains `{{PLACEHOLDER}}`, or still contains the TEMPLATE block.
 
 - [ ] Every `{{PLACEHOLDER}}` filled in
 - [ ] TEMPLATE block at the top deleted
-- [ ] Still under ~50 lines
+- [ ] Still under 700 words. A line too long to read at a glance is a sign it belongs in `docs/`
 - [ ] **Boundaries** section written with real entries — generated dirs, migrations, protected
       branches, anything that breaks if edited directly. This is the highest-value section.
+- [ ] **Push policy.** The default boundary is "commit locally; never push — the owner pushes".
+      Ask whether that holds, or whether agents may push branches or open PRs
 - [ ] Example boundaries deleted, and the comment above them
+- [ ] The secrets boundary deleted if the project has none; replace it with "the app has no
+      secrets; if one appears, stop and ask"
 - [ ] **Pre-release** boundary left in place. It comes out at the first production release, when
       stored data starts needing migrations — not now
 
@@ -135,13 +170,41 @@ pick from what they see. Edit `docs/writing.md` in place with what they choose.
       short `scripts/commit-msg` if they don't want the dependency. Say which is more
       appropriate for the stack
 
-## 7. Automation
+## 7. Orchestration — `docs/agent-rules.md`
+
+How work is split across subagents. The file ships as a loose shape with defaults; this step sets
+it to how the owner wants to work. Ask each question as a choice with the default first, marked
+recommended, so the owner can take it with one answer. Ask only the ones step 1's answers left
+open, and fill the **Roles and settings** table with the answers.
+
+- [ ] **Will agents work in parallel?** *Orchestrated (default)*: one session plans, briefs
+      builders in their own worktrees, merges and runs the gate. *Solo*: one session does the
+      work in order; delete `docs/agent-rules.md` and the sentence in AGENTS.md that links it.
+      If solo, skip the rest of this step
+- [ ] **Integration branch.** *`main` (default)*, or a named branch merged into `main` when the
+      owner says (`m1-base`), for when `main` should only move at milestones
+- [ ] **Builders at once.** *3 (default)*, 2 on a smaller machine, more only if the full gate
+      stays green under that load
+- [ ] **Review.** *A fresh reviewer for every build (default)*; or a review at the end of each
+      phase (`/code-review` and `/simplify` on the phase branch, fixes in their own commits); or
+      both, for code where a missed bug costs a lot
+- [ ] **Plan.** *`docs/plan.md`, committed (default)*: it survives a move to another machine,
+      and the log is history worth keeping. Or `tmp/plan.md`, untracked, for a plan that is
+      scaffolding the owner doesn't want in the repo. Either way, the plan says how to run it:
+      the phrase that starts the next step or phase, and what stops a run
+- [ ] **Models.** *The strongest model for builders that change several files, the default for
+      reviews, fixes and searches (default)*; or what the owner's own CLAUDE.md already says,
+      which wins
+- [ ] **Anything else in the file the owner wants different.** Show the Builders and
+      Orchestrator rule titles in one list and ask once; don't walk through them one by one
+
+## 8. Automation
 
 - [ ] `.github/workflows/check.yml` — add the setup action for this language after the checkout,
       reading the version from the pinned file rather than repeating it inline, and delete the
       placeholder `run: echo ::error::` step at the bottom. The commented alternatives in that file
       cover Node, Python, Go and Ruby. Delete the whole directory if this repo will not live on
-      GitHub. Once step 9 removes this file, `./scripts/check` fails while the placeholder survives —
+      GitHub. Once step 10 removes this file, `./scripts/check` fails while the placeholder survives —
       until then only CI catches it.
 - [ ] Pre-commit hook, if you want the gate locally too
 - [ ] `.claude/settings.json` `allow` list extended with this project's own commands. Only add rules
@@ -157,13 +220,20 @@ pick from what they see. Edit `docs/writing.md` in place with what they choose.
       reads are already covered: a `Read` deny applies to `cat`, `head`, `tail` and `sed` in Bash
       (though not to a script that opens the file itself — that needs the sandbox).
 
-## 8. First decision record
+## 9. Decision records
 
+- [ ] **What gets a record.** Ask, with examples of each. *Every choice a reader would otherwise
+      reopen, behavior the owner decided included (default)*: records become the behavior spec,
+      and briefs quote them. Expect one per feature or so. Or *architecture and tooling only*:
+      fewer records, and behavior lives in the plan and the tests. Write the answer into the
+      **Decision records** section of `docs/map.md`, and make the Definition of done line in
+      AGENTS.md say the same
 - [ ] Copy `docs/decisions/0000-template.md` to `0001-<slug>.md` and record the stack choice —
       why this language/framework, what was rejected. It's the cheapest one you'll ever write and it
-      proves the habit exists.
+      proves the habit exists. If step 1 named a sibling project to follow, say here what is
+      ported from it and where its records are.
 
-## 9. Delete the scaffolding
+## 10. Delete the scaffolding
 
 Do the rewrites first — deleting the two files while something still links to them fails the
 `links` step, and the `residue` step fails while any other mention survives.
@@ -171,11 +241,13 @@ Do the rewrites first — deleting the two files while something still links to 
 - [ ] `README.md` rewritten to describe *this project*, not the template: no `/scaffold` link or
       instructions, no `docs/scaffold.md` row, no "stubs until scaffolded"
 - [ ] `CLAUDE.md` — the `/scaffold` line deleted
-- [ ] `scripts/check` — the `todo()` helper and its comment deleted (nothing calls it once step 4
-      is done, including the `arch` step)
-- [ ] `.github/workflows/check.yml` — the placeholder `run: echo ::error::` step deleted (step 7)
+- [ ] `scripts/check` — no `todo "..."` step left (step 4)
+- [ ] `.github/workflows/check.yml` — the placeholder `run: echo ::error::` step deleted (step 8)
 - [ ] `docs/map.md` — tiers you dropped removed from the table and the `<!-- paths: -->` line
 - [ ] `docs/scaffold.md` (this file) deleted
 - [ ] `.claude/commands/scaffold.md` deleted
 - [ ] `./scripts/check` passes — the `residue` step now runs and finds nothing
+- [ ] `scripts/scaffold-check` deleted, and the line in `scripts/check` that sources it, with
+      its comment. The gate keeps none of the setup-time steps
+- [ ] `./scripts/check` passes again
 - [ ] Commit: `chore: scaffold project`, or its equivalent in the format chosen in step 6

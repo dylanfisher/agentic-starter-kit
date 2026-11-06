@@ -35,3 +35,8 @@ coverage/
 
 # Agent local overrides — the shared config is committed
 .claude/settings.local.json
+.claude/worktrees/
+
+# Untracked working state that outlives a session: plans in progress, handoffs,
+# screenshots, cloned reference docs. See docs/map.md.
+tmp/

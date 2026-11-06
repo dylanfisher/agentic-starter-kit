@@ -14,6 +14,10 @@ error message.
 The test: *if this value changed, how many files would I have to edit?* If the answer is more than
 one, it isn't a single source of truth yet.
 
+Searching before writing only helps when the author thinks to search. A check in `./scripts/check`
+that flags a literal defined in more than one file, or a block copied a third time, catches the
+rest. One project's first run of such a check found 160 repeated literals that review had missed.
+
 This applies to documentation too. Two files describing the same command will disagree within a
 month. Link instead of restating — that's why AGENTS.md links here rather than inlining this text.
 
@@ -69,6 +73,19 @@ Every dependency is a permanent surface: supply-chain risk, upgrade obligations,
 build-time cost — for code you now maintain but didn't write. Many are worth it. The decision
 belongs to the human, stated as "I want X for Y, which replaces about Z lines."
 
+## Tests are deterministic
+
+With several agents building at once, a loaded machine is the normal case, not the exception. A
+test that sleeps and hopes passes alone and fails under load, and a flaky gate teaches everyone to
+rerun instead of read. Inject the clock, stub the timer, or wait for a condition. When only a real
+animation or timer will do, poll for its end state with a bound and say so.
+
+A flaky test is a bug with a cause. Find it; don't rerun until green.
+
+Fakes stand in for the disk, the network and the clock, not for this project's own parts. Every
+path a user can reach has at least one test that drives it through the real collaborators: a
+stubbed collaborator is exactly where a crash every real caller would hit stays hidden.
+
 ## Style is the formatter's job
 
 Every line of style guidance in an agent file is context budget spent on something a tool enforces
@@ -89,4 +106,8 @@ Before adding a rule, ask:
 - Is this a one-time correction or a standing pattern? One-offs go in the conversation, not the file.
 - Does it replace an existing line rather than adding to it?
 
-If AGENTS.md exceeds ~50 lines, something needs to move into `docs/` or be deleted.
+If AGENTS.md exceeds 700 words, something needs to move into `docs/` or be deleted. The limit is
+in words, not lines, so it can't be met by packing a rule onto one long line.
+
+Overflow goes to `docs/`, linked from AGENTS.md. Not to CLAUDE.md: that file is for notes only
+Claude Code needs, and anything there is invisible to every other agent.

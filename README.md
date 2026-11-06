@@ -20,17 +20,20 @@ AGENTS.md, and deletes the scaffolding files as its last step.
 
 | Path | Purpose |
 |---|---|
-| `AGENTS.md` | The point of the repo. Read by every agent, every session. Kept under ~50 lines. |
+| `AGENTS.md` | The point of the repo. Read by every agent, every session. Kept under 700 words. |
 | `CLAUDE.md` | Imports AGENTS.md; holds Claude Code-only notes. |
-| `scripts/check` | The gate — AGENTS.md limits, map and link integrity, scaffolding residue, format, lint, typecheck, arch, test. One command to remember. |
-| `scripts/setup`, `scripts/dev`, `scripts/test` | Bootstrap, run, test. Stubs until scaffolded. `dev` is the only place the run command — `op run` wrapper and all — is written down. |
+| `scripts/check` | The gate — AGENTS.md size, map and link integrity, format, lint, typecheck, arch, duplicate and unused-API checks, test. One command to remember. |
+| `scripts/scaffold-check` | Setup-time steps the gate sources until setup is done: unfilled placeholders and scaffolding leftovers. Deleted at the end of setup. |
+| `scripts/setup`, `scripts/dev`, `scripts/test` | Bootstrap, run, test — `test --changed` is the fast loop agents iterate with. Stubs until scaffolded. `dev` is the only place the run command — `op run` wrapper and all — is written down. |
 | `.github/workflows/check.yml` | CI runs the same gate. Needs its language setup step filled in. |
 | `.github/pull_request_template.md` | Why, what to look at, how it was verified. |
 | `docs/scaffold.md` | Post-clone checklist — the single source for the setup procedure. Deleted once used. |
 | `docs/map.md` | Where things live and how to find one before building a second. Conventions, not an inventory. |
 | `docs/principles.md` | Rationale behind the principles in AGENTS.md. |
+| `docs/agent-rules.md` | How an orchestrating session hands work to builder and reviewer subagents. A loose default; `/scaffold` asks how you want it, or deletes it for solo work. |
+| `docs/reference.md` | Which local docs source answers which question, before the web. |
 | `docs/writing.md` | Voice for comments and docs, and the commit message format. |
-| `docs/decisions/` | ADRs — why things are the way they are. |
+| `docs/decisions/` | ADRs — why things are the way they are, and often the behavior spec. Conventions in `docs/map.md`. |
 | `.claude/` | Permission allowlist and the `/scaffold` command. |
 
 ## The two ideas
@@ -42,12 +45,12 @@ one run instead of four.
 
 **One file, kept small.** AGENTS.md accretes a rule every time an agent misbehaves, and a few
 hundred iterations later it's a wall of special cases that performs *worse* than the short version.
-The ~50-line limit is the mechanism against that; anything longer moves to `docs/` and is linked.
+The 700-word limit is the mechanism against that — words, not lines, so it can't be met by packing a rule onto one long line; anything longer moves to `docs/` and is linked.
 Everything a formatter or linter can enforce stays out of it entirely — including that limit, which
 `./scripts/check` enforces rather than trusting anyone to remember.
 
 The principles baked into AGENTS.md — single source of truth, match the surrounding code, DRY on the
-third occurrence, smallest viable change, fail loudly — don't change per project, so they ship
+third occurrence, smallest viable change, fail loudly, deterministic tests — don't change per project, so they ship
 filled in. Everything else is a placeholder for `/scaffold`.
 
 
@@ -61,8 +64,10 @@ filled in. Everything else is a placeholder for `/scaffold`.
 - Review and refactor often. Check for code duplication and ensure DRY. Keep the core clean so future code doesn't drift.
   Try to automate this: e.g. every N commits run an automated scan with cheap and fast agents.
 - Plan out large behaviors extensively. Start with a quick list of features, have an agent improve these based on
-  context awareness of the app, then create a multi-step plan.md file. Craft a prompt the will instruct an orchestrator
-  to implement each step using subagent(s).
+  context awareness of the app, then create a multi-step plan.md file. An orchestrating session then builds each step
+  with subagents, following `docs/agent-rules.md`.
+- Clean up after parallel agents. Worktrees left behind by finished builders pile up fast (one project reached 43 GB);
+  the orchestrator rules say to remove each one at merge.
 - For a performance-oriented app, measure and profile often. Watch for performance drift and fix before changes get merged.
 - For a typographic website, use AGENT rules to make sure typography is only applied via distinct class names and never
   one-off line-height, letter-spacing, or font-sizing adjustments.

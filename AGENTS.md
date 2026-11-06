@@ -12,7 +12,7 @@
 
 Instructions for AI coding agents working in this repo. Humans: see [README.md](README.md).
 
-**Keep this file under ~50 lines.** Anything longer lives in `docs/` and is linked from here.
+**Keep this file under 700 words.** Anything longer lives in `docs/` and is linked from here.
 
 ## Stack
 
@@ -21,6 +21,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 - **Framework:** {{FRAMEWORK, or "none"}}
 - **Test framework:** {{TEST FRAMEWORK}}
 - **Layout:** {{where source lives, where tests live}} — tiers and search recipes: [docs/map.md](docs/map.md)
+- **Reference docs:** [docs/reference.md](docs/reference.md) says which local source answers which question. Check it before the web.
 
 ## Commands
 
@@ -29,9 +30,10 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 | Install / bootstrap | `./scripts/setup` |
 | Run locally | `./scripts/dev` |
 | Run tests | `./scripts/test` |
+| Run the tests for what you changed | `./scripts/test --changed` |
 | **Full gate** | `./scripts/check` |
 
-`./scripts/check` is the gate — see Definition of done.
+`./scripts/check` is the gate — see Definition of done. Iterate with `./scripts/test --changed`; run `check` once, at the end. Work split across subagents follows [docs/agent-rules.md](docs/agent-rules.md).
 
 ## Principles
 
@@ -45,14 +47,15 @@ Non-negotiable, regardless of stack. Rationale: [docs/principles.md](docs/princi
 6. **Delete, don't comment out.** Git remembers.
 7. **No new dependencies without asking first.** Say what it's for and what it replaces.
 8. **Style is the formatter's job.** If a tool enforces it, it does not belong in this file or in review.
+9. **Tests are deterministic.** No waiting on real time: inject the clock or wait on a condition. A flaky test gets a hunt for the cause, not a rerun.
 
 ## Boundaries
 
 <!-- Highest-value section. Be specific about what must NOT be touched directly.
      Delete these examples and replace with real ones. -->
 - {{e.g. Never edit `db/migrations/` by hand — run `<migration command>`.}}
-- {{e.g. Never commit to `main` — branch first.}}
 - {{e.g. `src/generated/` is generated — edit the schema, then regenerate.}}
+- **Commit locally; never push.** The owner pushes.
 - **Pre-release:** breaking changes are fine. Stored data has one shape — no version fields, migrations, or compatibility shims; data that doesn't match is discarded. Delete this line at the first production release.
 - Never write, print, or `op read` a plaintext secret. `.env.example` holds `op://` references; they resolve via `op run` at runtime.
 
