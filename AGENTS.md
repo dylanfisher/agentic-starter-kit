@@ -35,6 +35,8 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 
 `./scripts/check` is the gate — see Definition of done. Iterate with `./scripts/test --changed`; run `check` once, at the end. Work split across subagents follows [docs/agent-rules.md](docs/agent-rules.md).
 
+**Read narrowly.** Find the spot with `grep -n`, then Read about 60 lines around it (offset/limit). Read a whole file only if it's under ~200 lines.
+
 ## Principles
 
 Non-negotiable, regardless of stack. Rationale: [docs/principles.md](docs/principles.md).
