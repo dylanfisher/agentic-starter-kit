@@ -21,6 +21,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 - **Framework:** {{FRAMEWORK, or "none"}}
 - **Test framework:** {{TEST FRAMEWORK}}
 - **Layout:** {{where source lives, where tests live}} — tiers and search recipes: [docs/map.md](docs/map.md)
+- **Version:** [Semantic Versioning](https://semver.org), in {{VERSION FILE}}. Bump rules: [docs/writing.md](docs/writing.md#versioning)
 - **Reference docs:** [docs/reference.md](docs/reference.md) says which local source answers which question. Check it before the web.
 
 ## Commands
@@ -31,6 +32,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 | Run locally | `./scripts/dev` |
 | Run tests | `./scripts/test` |
 | Run the tests for what you changed | `./scripts/test --changed` |
+| Bump the version | {{VERSION BUMP COMMAND, e.g. `npm version patch --no-git-tag-version`}} |
 | **Full gate** | `./scripts/check` |
 
 `./scripts/check` is the gate — see Definition of done. Iterate with `./scripts/test --changed`; run `check` once, at the end. Work split across subagents follows [docs/agent-rules.md](docs/agent-rules.md).
@@ -58,6 +60,7 @@ Non-negotiable, regardless of stack. Rationale: [docs/principles.md](docs/princi
 - {{e.g. Never edit `db/migrations/` by hand — run `<migration command>`.}}
 - {{e.g. `src/generated/` is generated — edit the schema, then regenerate.}}
 - **Commit locally; never push.** The owner pushes.
+- **Every commit bumps the version**, in that same commit — never a separate bump commit. [docs/writing.md](docs/writing.md#versioning) says by how much, and who bumps when subagents build.
 - **Pre-release:** breaking changes are fine. Stored data has one shape — no version fields, migrations, or compatibility shims; data that doesn't match is discarded. Delete this line at the first production release.
 - Never write, print, or `op read` a plaintext secret. `.env.example` holds `op://` references; they resolve via `op run` at runtime.
 

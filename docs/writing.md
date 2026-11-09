@@ -67,3 +67,26 @@ provider computes the charge.
 
 Refs #214
 ```
+
+## Versioning
+
+[Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`. The version lives in the one file
+AGENTS.md names, and changes only through the bump command in its Commands table.
+
+**Every commit bumps the version, in the same commit.** The commit type decides by how much:
+
+| Commit | From 1.0.0 | Before 1.0.0 |
+|---|---|---|
+| Breaking: `!` after the type, or a `BREAKING CHANGE:` footer | major | minor |
+| `feat` | minor | patch |
+| `fix`, `perf` | patch | patch |
+| Everything else: `refactor`, `test`, `docs`, `build`, `ci`, `chore` | patch | patch |
+
+- **Start at `0.1.0`.** Below 1.0 anything may change, which is what the Pre-release boundary in
+  AGENTS.md already allows. Release `1.0.0` when that boundary is deleted, at the first production
+  release.
+- **A commit or merge holding several changes takes the largest bump among them,** once. Two
+  `feat`s and a `fix` in one merge is one minor bump, not three.
+- **Orchestrated work:** builders don't bump on their branches, because every parallel branch would
+  edit the same line and conflict at merge. The orchestrator bumps in the merge commit
+  ([agent-rules.md](agent-rules.md)).

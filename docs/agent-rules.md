@@ -36,7 +36,8 @@ and write down why when a rule comes from something that went wrong.
    the orchestrator runs it at merge.
 4. Use only the decision-record number the orchestrator gave you.
 5. Scratch files go in your session's scratchpad. Don't write to `tmp/`; the orchestrator owns it.
-6. Commit on your branch, following docs/writing.md. Never push.
+6. Commit on your branch, following docs/writing.md, but don't bump the version: the orchestrator
+   does that at merge. Never push.
 7. Report: commit sha(s), what changed, each test added and how it failed before the change,
    judgment calls, and anything the owner should check by hand.
 
@@ -61,7 +62,9 @@ and write down why when a rule comes from something that went wrong.
 5. Fixes for a FAIL go back to a builder, and a fresh reviewer checks them. After a second FAIL
    with the same cause, don't send a third patch round: narrow the scope, change the design, or
    ask the owner.
-6. Merge onto the integration branch, then run `./scripts/check`. A flaky test that fails a merge
+6. Merge onto the integration branch with `git merge --no-ff --no-commit`, bump the version by the
+   largest bump among the step's commits (docs/writing.md), and commit the merge with the bump in
+   it. Then run `./scripts/check`. A flaky test that fails a merge
    gets a hunt for its cause, not a rerun.
 7. After a merge, remove the worktree and delete the branch. Left behind, worktrees cost gigabytes
    and slow every search of the repo.

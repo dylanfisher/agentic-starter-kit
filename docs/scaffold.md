@@ -170,6 +170,30 @@ pick from what they see. Edit `docs/writing.md` in place with what they choose.
       short `scripts/commit-msg` if they don't want the dependency. Say which is more
       appropriate for the stack
 
+### Versioning — `docs/writing.md`
+
+The default is a version bump in every commit, sized by the commit type, so every build on the
+integration branch has its own number. Ask each as a choice, default first and recommended.
+
+- [ ] **Scheme.** *Semantic Versioning (default)*: the bump follows from the commit format above,
+      so nobody has to judge it. Or *CalVer* (`2026.11.0`) for an app with no API or users who
+      pin versions; rewrite the Versioning section for it. Or *none*: delete the Versioning
+      section, the **Version** line, the bump boundary and the bump command row in AGENTS.md, and
+      the version lines in `docs/agent-rules.md`, then skip the rest of this list
+- [ ] **Where it lives.** One file, the one the stack's tooling already reads: `package.json`,
+      `pyproject.toml`, `Cargo.toml`, `mix.exs`. A top-level `VERSION` file only when there is
+      none. Set it to `0.1.0` and name it in the AGENTS.md **Version** line
+- [ ] **Bump command.** The package manager's own, where it has one, since it also updates the
+      lockfile copy (`npm version <level> --no-git-tag-version`, `uv version --bump <level>`,
+      `poetry version <level>`). Otherwise a short `scripts/version <level>` that rewrites the one
+      line. Fill the AGENTS.md Commands row with it
+- [ ] **Which commits bump.** *Every commit (default)*: `docs`, `test` and `chore` take a patch.
+      Or *only commits that change shipped code*: set the last row of the table to "none", and
+      reword the AGENTS.md boundary to match
+- [ ] **Enforcement.** Offer a `pre-commit` hook that fails when a commit on the integration
+      branch leaves the version file unchanged. Builder branches are exempt — the orchestrator
+      bumps at merge (step 7)
+
 ## 7. Orchestration — `docs/agent-rules.md`
 
 How work is split across subagents. The file ships as a loose shape with defaults; this step sets
@@ -250,4 +274,5 @@ Do the rewrites first — deleting the two files while something still links to 
 - [ ] `scripts/scaffold-check` deleted, and the line in `scripts/check` that sources it, with
       its comment. The gate keeps none of the setup-time steps
 - [ ] `./scripts/check` passes again
-- [ ] Commit: `chore: scaffold project`, or its equivalent in the format chosen in step 6
+- [ ] Commit: `chore: scaffold project`, or its equivalent in the format chosen in step 6. It
+      sets the version to `0.1.0`; bumping starts with the next commit
