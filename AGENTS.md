@@ -21,7 +21,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 - **Framework:** {{FRAMEWORK, or "none"}}
 - **Test framework:** {{TEST FRAMEWORK}}
 - **Layout:** {{where source lives, where tests live}} — tiers and search recipes: [docs/map.md](docs/map.md)
-- **Version:** [Semantic Versioning](https://semver.org), in {{VERSION FILE}}. Bump rules: [docs/writing.md](docs/writing.md#versioning)
+- **Version:** [Semantic Versioning](https://semver.org), in `VERSION`. Bump rules: [docs/writing.md](docs/writing.md#versioning)
 - **Reference docs:** [docs/reference.md](docs/reference.md) says which local source answers which question. Check it before the web.
 
 ## Commands
@@ -32,7 +32,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 | Run locally | `./scripts/dev` |
 | Run tests | `./scripts/test` |
 | Run the tests for what you changed | `./scripts/test --changed` |
-| Bump the version | {{VERSION BUMP COMMAND, e.g. `npm version patch --no-git-tag-version`}} |
+| Bump the version | `./scripts/version <major\|minor\|patch>` |
 | **Full gate** | `./scripts/check` |
 
 `./scripts/check` is the gate — see Definition of done. Iterate with `./scripts/test --changed`; run `check` once, at the end. Work split across subagents follows [docs/agent-rules.md](docs/agent-rules.md).

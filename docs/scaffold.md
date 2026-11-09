@@ -178,15 +178,17 @@ integration branch has its own number. Ask each as a choice, default first and r
 - [ ] **Scheme.** *Semantic Versioning (default)*: the bump follows from the commit format above,
       so nobody has to judge it. Or *CalVer* (`2026.11.0`) for an app with no API or users who
       pin versions; rewrite the Versioning section for it. Or *none*: delete the Versioning
-      section, the **Version** line, the bump boundary and the bump command row in AGENTS.md, and
-      the version lines in `docs/agent-rules.md`, then skip the rest of this list
-- [ ] **Where it lives.** One file, the one the stack's tooling already reads: `package.json`,
-      `pyproject.toml`, `Cargo.toml`, `mix.exs`. A top-level `VERSION` file only when there is
-      none. Set it to `0.1.0` and name it in the AGENTS.md **Version** line
-- [ ] **Bump command.** The package manager's own, where it has one, since it also updates the
-      lockfile copy (`npm version <level> --no-git-tag-version`, `uv version --bump <level>`,
-      `poetry version <level>`). Otherwise a short `scripts/version <level>` that rewrites the one
-      line. Fill the AGENTS.md Commands row with it
+      section, the **Version** line, the bump boundary and the bump command row in AGENTS.md, the
+      version lines in `docs/agent-rules.md`, `VERSION` and `scripts/version`, then skip the rest
+      of this list
+- [ ] **Where it lives.** One file. `VERSION` ships holding the starter's own version; keep it,
+      reset to `0.1.0`, when the stack has no manifest that carries a version. When it has one
+      (`package.json`, `pyproject.toml`, `Cargo.toml`, `mix.exs`), set that to `0.1.0`, delete
+      `VERSION`, and name the manifest in the AGENTS.md **Version** line
+- [ ] **Bump command.** `./scripts/version <level>` goes with `VERSION`. With a manifest, use the
+      package manager's own command, since it also updates the lockfile copy
+      (`npm version <level> --no-git-tag-version`, `uv version --bump <level>`,
+      `poetry version <level>`): put it in the AGENTS.md Commands row and delete `scripts/version`
 - [ ] **Which commits bump.** *Every commit (default)*: `docs`, `test` and `chore` take a patch.
       Or *only commits that change shipped code*: set the last row of the table to "none", and
       reword the AGENTS.md boundary to match

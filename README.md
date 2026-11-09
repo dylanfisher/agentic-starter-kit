@@ -25,6 +25,7 @@ AGENTS.md, and deletes the scaffolding files as its last step.
 | `scripts/check` | The gate — AGENTS.md size, map and link integrity, format, lint, typecheck, arch, duplicate and unused-API checks, test. One command to remember. |
 | `scripts/scaffold-check` | Setup-time steps the gate sources until setup is done: unfilled placeholders and scaffolding leftovers. Deleted at the end of setup. |
 | `scripts/setup`, `scripts/dev`, `scripts/test` | Bootstrap, run, test — `test --changed` is the fast loop agents iterate with. Stubs until scaffolded. `dev` is the only place the run command — `op run` wrapper and all — is written down. |
+| `VERSION`, `scripts/version` | The version, semver, bumped in every commit by `scripts/version <level>`. The commit type sets the level; rules in `docs/writing.md`. |
 | `.github/workflows/check.yml` | CI runs the same gate. Needs its language setup step filled in. |
 | `.github/pull_request_template.md` | Why, what to look at, how it was verified. |
 | `docs/scaffold.md` | Post-clone checklist — the single source for the setup procedure. Deleted once used. |
