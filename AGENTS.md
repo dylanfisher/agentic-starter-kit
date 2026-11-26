@@ -33,6 +33,7 @@ Instructions for AI coding agents working in this repo. Humans: see [README.md](
 | Run tests | `./scripts/test` |
 | Run the tests for what you changed | `./scripts/test --changed` |
 | Bump the version | `./scripts/version <major\|minor\|patch>` |
+| Gate without the tests: seconds | `./scripts/check --static` |
 | **Full gate** | `./scripts/check` |
 
 `./scripts/check` is the gate — see Definition of done. Iterate with `./scripts/test --changed`; run `check` once, at the end. Work split across subagents follows [docs/agent-rules.md](docs/agent-rules.md).

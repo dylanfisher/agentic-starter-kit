@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Run a command with a time limit, and fail loudly when it hits the limit.
+#   ./scripts/watchdog <seconds> <command...>
+#
+# On timeout it names the command and how long it ran, lists its processes, and sends them
+# SIGQUIT, so a runtime that dumps stacks on that signal prints where it hung (Go and the JVM do;
+# Python does after faulthandler.register(signal.SIGQUIT)). Then it kills them and exits 124.
+# A hang that prints nothing is the most expensive failure there is: it costs the whole wait and
+# says nothing about the cause.
+set -uo pipefail
+
+if [ $# -lt 2 ] || ! [[ "$1" =~ ^[0-9]+$ ]]; then
+  echo "usage: ./scripts/watchdog <seconds> <command...>" >&2; exit 2
+fi
+limit=$1; shift
+marker=$(mktemp)
+rm -f "$marker"
+
+# Job control puts the command in its own process group, so the signals below reach everything
+# it started (npx → node, a test runner's workers), not only the top process.
+set -m
+"$@" &
+pid=$!
+
+stop_group() { kill "-$1" -- "-$pid" 2>/dev/null; }
+trap 'stop_group TERM; exit 130' INT TERM
+
+# The watcher reports on fd 3. Its own stderr goes to /dev/null, which hides bash's
+# "Terminated" notice when the watcher is stopped early, the normal case.
+exec 3>&2
+(
+  # The sleeps hold no inherited output: left holding them, a sleep would keep a pipe
+  # downstream (`./scripts/check | tee`) open until the limit even after the command finished.
+  sleep "$limit" </dev/null >/dev/null 3>&-
+  kill -0 "$pid" 2>/dev/null || exit 0
+  : > "$marker"
+  printf '\n\033[31m✗ watchdog: still running after %ss: %s\033[0m\n' "$limit" "$*" >&3
+  pids=$(pgrep -g "$pid" | paste -sd, -)
+  [ -n "$pids" ] && ps -o pid,etime,command -p "$pids" >&3
+  echo "Sending SIGQUIT for a stack dump, then killing it." >&3
+  stop_group QUIT; sleep 5 </dev/null >/dev/null 3>&-
+  stop_group TERM; sleep 2 </dev/null >/dev/null 3>&-
+  stop_group KILL
+) 2>/dev/null &
+watcher=$!
+
+wait "$pid"
+status=$?
+pkill -P "$watcher" 2>/dev/null
+kill "$watcher" 2>/dev/null
+wait "$watcher" 2>/dev/null
+
+if [ -e "$marker" ]; then
+  stop_group KILL   # anything the top process left behind when the signals ended it
+  rm -f "$marker"; exit 124
+fi
+exit "$status"

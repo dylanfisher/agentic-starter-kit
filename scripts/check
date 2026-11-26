@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 # The gate. Everything must pass before work is considered done.
 # Keep this the ONLY command anyone — human or agent — needs to remember.
+#   ./scripts/check            every step
+#   ./scripts/check --static   every step but the tests: seconds, not minutes. Use it to
+#                              confirm a format, lint or naming fix without paying for the suite.
 #
 # Every step runs even if an earlier one fails, so one invocation reports every
 # problem. Fixing four failures should cost one run, not four.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+
+static=false
+case "${1:-}" in
+  "") ;;
+  --static) static=true ;;
+  *) echo "usage: ./scripts/check [--static]" >&2; exit 2 ;;
+esac
+
+# Locally the formatter fixes files instead of reporting them: a report costs a round trip and
+# teaches nothing. CI only checks, because CI must never rewrite the tree it is testing.
+format_mode=--write
+[ -n "${CI:-}" ] && format_mode=--check
 
 failures=()
 
@@ -68,7 +83,7 @@ run links bash -c '
   echo "all relative links resolve"
 '
 
-run format    todo "npx prettier --check ."
+run format    todo "npx prettier $format_mode ."
 run lint      todo "npx eslint ."
 run typecheck todo "npx tsc --noEmit"   # delete this step entirely if the language is untyped
 run arch      todo "npx depcruise --validate"   # or ./scripts/arch — see the Tiers table in docs/map.md
@@ -76,7 +91,9 @@ run arch      todo "npx depcruise --validate"   # or ./scripts/arch — see the 
 # public API nothing outside its module calls. Delete a step the project declines.
 run dupes     todo "npx jscpd --exit-code 1 src"
 run surface   todo "npx knip"
-run test      ./scripts/test
+# The limit is about three times the suite's normal run: a hang fails loudly with a stack dump
+# instead of sitting silent. Raise it only with a measured reason.
+$static || run test ./scripts/watchdog 600 ./scripts/test
 
 if [ ${#failures[@]} -gt 0 ]; then
   printf '\n\033[31m✗ failed: %s\033[0m\n' "${failures[*]}" >&2

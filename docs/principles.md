@@ -61,6 +61,10 @@ production, usually far from the cause.
 Handle an error when you have a genuine recovery. Otherwise let it propagate. "The code kept
 running" is not the same as "the code worked."
 
+A hang is the quietest failure of all: it costs the whole wait and says nothing about the cause.
+Every long-running process gets a time limit that, when hit, names the process and dumps its
+stacks (`./scripts/watchdog`).
+
 ## Delete, don't comment out
 
 Commented-out code is a claim that something might come back, which is almost never true. It rots,

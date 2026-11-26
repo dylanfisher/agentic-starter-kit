@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 # Run the tests.
 #   ./scripts/test                   the whole suite
-#   ./scripts/test --changed [ref]   only the tests for the files changed since ref (default
+#   ./scripts/test --changed [ref]   only the tests that load a file changed since ref (default
 #                                    HEAD), uncommitted and untracked files included. A change
 #                                    to a shared input (the manifest, test helpers, this
 #                                    script) runs the whole suite.
 #   ./scripts/test <args>            passes args to the test runner, for a focused run
+#
+# `--changed` picks tests by what each one imports, never by file name: name matching misses
+# every dependent, and the misses surface later as failed full gates. If code changed and no
+# test was picked, it fails: a picker that finds nothing is broken more often than the change
+# is untested. A change to docs only exits 0 and says so.
+#
+# The suite runs across processes (the runner's workers, pytest -n auto, go test's packages).
 #
 # `--changed` is the inner loop: agents iterate with it and run ./scripts/check once, at the
 # end. Several full runs at once, one per parallel agent, load the machine until timing tests
@@ -15,7 +22,9 @@ cd "$(dirname "$0")/.."
 
 # Replace the two lines below with the real commands, e.g.
 #   npm:    exec npx vitest run "$@"            --changed: npx vitest run --changed "${2:-HEAD}"
-#   pytest: exec uv run pytest "$@"             --changed: map each changed file to its test file
-#   go:     exec go test ./... "$@"             --changed: go test on the packages git diff names
+#   jest:   exec npx jest "$@"                  --changed: npx jest --findRelatedTests <files>
+#   pytest: exec uv run pytest -n auto "$@"     --changed: pytest --testmon (records what loads)
+#   go:     exec go test ./... "$@"             --changed: go test on every package whose
+#                                               `go list -deps` includes a changed package
 printf '\033[31m✗ no test command configured — run /scaffold (see docs/scaffold.md).\033[0m\n' >&2
 exit 1

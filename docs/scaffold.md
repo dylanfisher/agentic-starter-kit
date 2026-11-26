@@ -65,10 +65,16 @@ first file written already obeys it.
 
 Everything here exists so that AGENTS.md never has to describe style in prose.
 
-- [ ] Formatter installed and configured (Prettier, Black, gofmt, rustfmt…)
-- [ ] Linter installed and configured
+- [ ] Formatter installed and configured (Prettier, Black, gofmt, rustfmt…), with a mode that
+      writes fixes and one that only checks. The gate writes locally and checks under `CI`
+- [ ] Linter installed and configured, with a per-file line cap (`max-lines`, pylint's
+      `max-module-lines`) and a warning at about 70% of it. A file sitting at the cap costs a
+      split on every change; the warning says to split while it is still cheap
 - [ ] Type checking enabled in **strict** mode, if the language has it
-- [ ] Test framework installed, with one trivial passing test to prove the wiring
+- [ ] Test framework installed, with one trivial passing test to prove the wiring, and running
+      across processes from that first test (vitest and `go test` do by default; pytest needs
+      `pytest-xdist`, a dependency to ask about). Adding this later means finding every test
+      that shares a port, a temp dir or a global first; on an empty suite it's free
 - [ ] **Single-source checks.** Recommend two, and wire in the ones the owner takes as the
       `dupes` and `surface` steps of `./scripts/check`; delete a declined step:
       - *dupes*: a literal of four or more characters in more than one source file, or a block of
@@ -94,13 +100,21 @@ unconfigured step is a `run <name> todo "<suggested command>"` line — replace 
 
 - [ ] `./scripts/setup` installs dependencies from a clean checkout (replace the stub `printf`/`exit`)
 - [ ] `./scripts/test` runs the suite (same)
-- [ ] `./scripts/test --changed [ref]` runs only the tests for the files changed since `ref`
+- [ ] `./scripts/test --changed [ref]` runs only the tests that load a file changed since `ref`
       (default `HEAD`), untracked files included, and the whole suite when a shared input changes
-      (the manifest, test helpers, the script itself). Use the runner's own option where it has
-      one (`vitest --changed`, `jest --changedSince`); otherwise map each changed source file to
-      its test file by the naming rule in `docs/map.md`. The script's header says the contract.
+      (the manifest, test helpers, the script itself). Pick by the import graph, never by file
+      name: `vitest --changed`, `jest --findRelatedTests`, `pytest --testmon`, `go list -deps`.
+      With no graph to read, run the whole suite. Code changed and no test picked is a failure;
+      a docs-only change exits 0. The script's header says the contract. Verify it: change a
+      helper only one test imports through another module, and see that test picked
       Ask whether to add, now or later: skipping the whole suite when its inputs match the last
       passing run, and a low-priority mode for when several agents build at once
+- [ ] **Timeouts that dump stacks.** `scripts/check` runs the suite under `./scripts/watchdog`;
+      set its limit to about three times the suite's normal run. Also set the runner's own
+      per-test and per-hook timeouts (vitest `testTimeout`/`hookTimeout`, `pytest-timeout` with
+      `faulthandler`, `go test -timeout`), and wrap any other long-running script — a sweep, an
+      import, a server the tests start — in `./scripts/watchdog`. Python dumps stacks on the
+      watchdog's SIGQUIT only after `faulthandler.register(signal.SIGQUIT)` in test setup
 - [ ] `./scripts/dev` runs the app locally, wrapping `op run` (same). This is the only place the run
       command is written down — AGENTS.md, README and `.env.example` point at the script, never
       repeat it. A longhand `op run --env-file=... -- <server> <flags>` copied into three files is
@@ -109,7 +123,8 @@ unconfigured step is a `run <name> todo "<suggested command>"` line — replace 
       the `typecheck` step entirely if the language is untyped, the `arch` step if nothing enforces
       the tier boundaries in docs/map.md, and any single-source step the owner declined
 - [ ] Verified: `./scripts/check` exits 0, and exits non-zero with **all** failures listed when you
-      deliberately break something
+      deliberately break something. `./scripts/check --static` runs every step but the tests, in
+      seconds
 
 ## 5. Environment and secrets
 
